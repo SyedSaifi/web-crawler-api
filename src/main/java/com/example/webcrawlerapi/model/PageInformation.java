@@ -1,6 +1,7 @@
 package com.example.webcrawlerapi.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,18 +9,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PageInformation {
 
+    @ApiModelProperty(notes = "input baseUrl")
     private String baseUrl;
 
-    private AtomicInteger internalLinks;
+    @ApiModelProperty(notes = "number of links from same domain as baseUrl")
+    private int internalLinks;
 
-    private AtomicInteger externalLinks;
+    @ApiModelProperty(notes = "number of links from different domain than baseUrl")
+    private int externalLinks;
 
+    @JsonIgnore
+    private AtomicInteger internal;
+
+    @JsonIgnore
+    private AtomicInteger external;
+
+    @ApiModelProperty(notes = "link metedata")
     private List<LinkInformation> links;
 
     public PageInformation(String baseUrl) {
         this.baseUrl = baseUrl;
-        this.internalLinks = new AtomicInteger();
-        this.externalLinks = new AtomicInteger();
+        this.internal = new AtomicInteger();
+        this.external = new AtomicInteger();
     }
 
     @JsonIgnore
@@ -40,20 +51,36 @@ public class PageInformation {
         this.baseUrl = baseUrl;
     }
 
-    public AtomicInteger getInternalLinks() {
+    public int getInternalLinks() {
         return internalLinks;
     }
 
-    public void setInternalLinks(AtomicInteger internalLinks) {
+    public void setInternalLinks(int internalLinks) {
         this.internalLinks = internalLinks;
     }
 
-    public AtomicInteger getExternalLinks() {
+    public AtomicInteger getInternal() {
+        return internal;
+    }
+
+    public void setInternal(AtomicInteger internal) {
+        this.internal = internal;
+    }
+
+    public int getExternalLinks() {
         return externalLinks;
     }
 
-    public void setExternalLinks(AtomicInteger externalLinks) {
+    public void setExternalLinks(int externalLinks) {
         this.externalLinks = externalLinks;
+    }
+
+    public AtomicInteger getExternal() {
+        return external;
+    }
+
+    public void setExternal(AtomicInteger external) {
+        this.external = external;
     }
 
     public List<LinkInformation> getLinks() {

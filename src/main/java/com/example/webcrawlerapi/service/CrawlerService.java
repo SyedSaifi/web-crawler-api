@@ -54,15 +54,17 @@ public class CrawlerService implements ICrawlerService {
                         String internalLink = link.attr("abs:href");
 
                         if (internalLink.contains(hostname))
-                            pageInformation.getInternalLinks().incrementAndGet();
+                            pageInformation.getInternal().incrementAndGet();
                         else
-                            pageInformation.getExternalLinks().incrementAndGet();
+                            pageInformation.getExternal().incrementAndGet();
 
                         LinkInformation linkInformation = fetchLinkInformation(internalLink);
                         pageInformation.addLinkInfo(linkInformation);
                         crawl(internalLink, depth - 1, pageInformation, updatedProcessedUrls);
                     });
                 });
+                pageInformation.setInternalLinks(pageInformation.getInternal().get());
+                pageInformation.setExternalLinks(pageInformation.getExternal().get());
                 return pageInformation;
             } else {
                 return null;

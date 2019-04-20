@@ -34,8 +34,8 @@ public class CrawlerServiceTest {
                 pageInformation, null);
         Assert.assertEquals("https://jsoup111.org/", pageInfomation.getBaseUrl());
         Assert.assertNull(pageInfomation.getLinks());
-        Assert.assertEquals(0, pageInfomation.getInternalLinks().get());
-        Assert.assertEquals(0, pageInfomation.getExternalLinks().get());
+        Assert.assertEquals(0, pageInfomation.getInternalLinks());
+        Assert.assertEquals(0, pageInfomation.getExternalLinks());
     }
 
     @Test
@@ -45,7 +45,7 @@ public class CrawlerServiceTest {
                 pageInformation, null);
         Assert.assertEquals("https://jsoup.org/", pageInfomation.getBaseUrl());
         Assert.assertTrue(pageInfomation.getLinks().size() > 0);
-        Assert.assertTrue(pageInfomation.getInternalLinks().get() > 0);
-        Assert.assertTrue(pageInfomation.getExternalLinks().get() > 0);
+        Assert.assertTrue(pageInfomation.getInternalLinks() > 0);
+        Assert.assertTrue(pageInfomation.getExternalLinks() > 0);
     }
 }
