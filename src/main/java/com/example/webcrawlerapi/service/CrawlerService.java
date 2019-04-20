@@ -1,5 +1,6 @@
 package com.example.webcrawlerapi.service;
 
+import com.example.webcrawlerapi.configuration.AppPropertiesConfig;
 import com.example.webcrawlerapi.model.LinkInformation;
 import com.example.webcrawlerapi.model.PageInformation;
 import org.jsoup.Connection;
@@ -8,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,6 +21,9 @@ import java.util.Optional;
 public class CrawlerService implements ICrawlerService {
 
     private static Logger logger = LoggerFactory.getLogger(CrawlerService.class);
+
+    @Autowired
+    private AppPropertiesConfig crawlerProperties;
 
     /**
      *
@@ -65,7 +70,8 @@ public class CrawlerService implements ICrawlerService {
         logger.info("Fetching links for url: {}", url);
 
         try {
-            final Document document = Jsoup.connect(url).get();
+            final Document document = Jsoup.connect(url).timeout(crawlerProperties.getTimeOut())
+                    .followRedirects(crawlerProperties.isFollowRedirects()).get();
             final Elements links = document.select("a[href]");
 
             return Optional.of(links);
@@ -80,7 +86,8 @@ public class CrawlerService implements ICrawlerService {
         LinkInformation linkInformation = new LinkInformation();
 
         try {
-            Connection connection = Jsoup.connect(internalLink);
+            Connection connection = Jsoup.connect(internalLink).timeout(crawlerProperties.getTimeOut())
+                    .followRedirects(crawlerProperties.isFollowRedirects());
             Document htmlDocument = connection.get();
 
             linkInformation.setLink(internalLink);
