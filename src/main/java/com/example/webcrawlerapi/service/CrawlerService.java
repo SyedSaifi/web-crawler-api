@@ -48,7 +48,7 @@ public class CrawlerService implements ICrawlerService {
 
                 fetchLinks(baseUrl).ifPresent(elements -> {
                     logger.info("Found {} links on the web page: {}", elements.size(), baseUrl);
-                    elements.stream().forEach(link -> {
+                    elements.parallelStream().forEach(link -> {
                         String internalLink = link.attr("abs:href");
 
                         if (internalLink.contains(hostname))
