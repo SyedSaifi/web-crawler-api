@@ -15,8 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,7 +40,7 @@ public class CrawlerControllerTest {
 
     @Test
     public void testGetPageInformation() throws Exception{
-        when(crawlerService.crawl(anyString(), anyInt()))
+        when(crawlerService.crawl(anyString(), anyInt(), any(PageInformation.class), anyList()))
                 .thenReturn(pageInfomation);
 
         MvcResult mvcResult = mockMvc.perform(get("/crawler?url=someurl&depth=1")

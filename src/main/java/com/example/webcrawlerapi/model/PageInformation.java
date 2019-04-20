@@ -1,18 +1,33 @@
 package com.example.webcrawlerapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PageInformation {
+
     private String baseUrl;
 
-    private int internalLinks;
+    private AtomicInteger internalLinks;
 
-    private int externalLinks;
+    private AtomicInteger externalLinks;
 
     private List<LinkInformation> links;
 
     public PageInformation(String baseUrl) {
         this.baseUrl = baseUrl;
+    }
+
+    @JsonIgnore
+    public void addLinkInfo(LinkInformation linkInformation){
+        if(links == null){
+            links = new ArrayList<>();
+        }
+        if(linkInformation != null){
+            links.add(linkInformation);
+        }
     }
 
     public String getBaseUrl() {
@@ -23,19 +38,19 @@ public class PageInformation {
         this.baseUrl = baseUrl;
     }
 
-    public int getInternalLinks() {
+    public AtomicInteger getInternalLinks() {
         return internalLinks;
     }
 
-    public void setInternalLinks(int internalLinks) {
+    public void setInternalLinks(AtomicInteger internalLinks) {
         this.internalLinks = internalLinks;
     }
 
-    public int getExternalLinks() {
+    public AtomicInteger getExternalLinks() {
         return externalLinks;
     }
 
-    public void setExternalLinks(int externalLinks) {
+    public void setExternalLinks(AtomicInteger externalLinks) {
         this.externalLinks = externalLinks;
     }
 

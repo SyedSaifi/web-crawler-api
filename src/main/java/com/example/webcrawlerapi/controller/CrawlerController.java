@@ -37,6 +37,6 @@ public class CrawlerController {
             @RequestParam(value = "depth") final Integer depth) {
         logger.info("Request for crawling received for url {} and depth {}", url, depth);
 
-        return new ResponseEntity<>(crawlerService.crawl(url, depth), HttpStatus.OK);
+        return new ResponseEntity<>(crawlerService.crawl(url, depth, new PageInformation(url), null), HttpStatus.OK);
     }
 }
