@@ -2,6 +2,7 @@ package com.example.webcrawlerapi.controller;
 
 import com.example.webcrawlerapi.model.PageInformation;
 import com.example.webcrawlerapi.service.ICrawlerService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +37,15 @@ public class CrawlerControllerTest {
     @Before
     public void setUp() throws Exception {
         pageInfomation = new PageInformation("someurl");
+    }
+
+    @Test
+    public void testGetPageInformationIncorrectUrl() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get("/crawler").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        Assert.assertEquals("Required String parameter 'url' is not present",
+                mvcResult.getResponse().getErrorMessage());
     }
 
     @Test
