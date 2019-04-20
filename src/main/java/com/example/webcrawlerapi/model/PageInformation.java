@@ -18,6 +18,8 @@ public class PageInformation {
 
     public PageInformation(String baseUrl) {
         this.baseUrl = baseUrl;
+        this.internalLinks = new AtomicInteger();
+        this.externalLinks = new AtomicInteger();
     }
 
     @JsonIgnore

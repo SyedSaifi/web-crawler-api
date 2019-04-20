@@ -1,5 +1,6 @@
 package com.example.webcrawlerapi.service;
 
+import com.example.webcrawlerapi.configuration.AppPropertiesConfig;
 import com.example.webcrawlerapi.model.PageInformation;
 import org.junit.Assert;
 import org.junit.Before;
@@ -14,6 +15,9 @@ import static org.junit.Assert.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CrawlerServiceTest {
 
+    @Mock
+    private AppPropertiesConfig crawlerProperties;
+
     @InjectMocks
     private CrawlerService crawlerService;
 
@@ -27,7 +31,7 @@ public class CrawlerServiceTest {
     public void testCrawlIncorrectUrl() {
         pageInformation = new PageInformation("https://jsoup111.org/");
         PageInformation pageInfomation = crawlerService.crawl("https://jsoup111.org/", 1,
-                this.pageInformation, null);
+                pageInformation, null);
         Assert.assertEquals("https://jsoup111.org/", pageInfomation.getBaseUrl());
         Assert.assertNull(pageInfomation.getLinks());
         Assert.assertEquals(0, pageInfomation.getInternalLinks().get());

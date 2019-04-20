@@ -44,12 +44,14 @@ public class CrawlerService implements ICrawlerService {
             final List<String> updatedProcessedUrls = Optional.ofNullable(processedUrls).orElse(new ArrayList<>());
             if (!updatedProcessedUrls.contains(baseUrl)) {
                 updatedProcessedUrls.add(baseUrl);
+                String hostname = baseUrl.split("://")[1].split("/")[0];
+
                 fetchLinks(baseUrl).ifPresent(elements -> {
                     logger.info("Found {} links on the web page: {}", elements.size(), baseUrl);
                     elements.stream().forEach(link -> {
                         String internalLink = link.attr("abs:href");
 
-                        if (internalLink.contains(baseUrl))
+                        if (internalLink.contains(hostname))
                             pageInformation.getInternalLinks().incrementAndGet();
                         else
                             pageInformation.getExternalLinks().incrementAndGet();
