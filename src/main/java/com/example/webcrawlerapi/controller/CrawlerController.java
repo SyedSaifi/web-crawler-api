@@ -43,6 +43,6 @@ public class CrawlerController {
         logger.info("Request for crawling received for url {} and depth {}", url, depth);
         final int newDepth = Optional.ofNullable(depth).orElse(crawlerProperties.getDefaultDepth());
         logger.info("Crawling for depth {}", newDepth);
-        return new ResponseEntity<>(crawlerService.crawl(url, depth, new PageInformation(url), null), HttpStatus.OK);
+        return new ResponseEntity<>(crawlerService.crawl(url, newDepth, new PageInformation(url), null), HttpStatus.OK);
     }
 }

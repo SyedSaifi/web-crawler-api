@@ -89,17 +89,17 @@ public class CrawlerService implements ICrawlerService {
         logger.info("Fetching contents for link {}", internalLink);
         LinkInformation linkInformation = new LinkInformation();
 
+        linkInformation.setLink(internalLink);
+        int index = internalLink.indexOf(":");
+        if (index != -1)
+            linkInformation.setProtocol(internalLink.substring(0, index));
+        else
+            linkInformation.setProtocol("unknown");
+
         try {
             Connection connection = Jsoup.connect(internalLink).timeout(crawlerProperties.getTimeOut())
                     .followRedirects(crawlerProperties.isFollowRedirects());
-            Document htmlDocument = connection.get();
-
-            linkInformation.setLink(internalLink);
-            int index = internalLink.indexOf(":");
-            if (index != -1)
-                linkInformation.setProtocol(internalLink.substring(0, index));
-            else
-                linkInformation.setProtocol("unknown");
+            connection.get();
 
             //HTTP OK status code indicating that everything is great.
             if (connection.response().statusCode() == 200) {
