@@ -1,0 +1,7 @@
+crawler:
+  default-depth: 1
+  time-out: 5000
+  follow-redirects: true
+
+server:
+  port: 8090

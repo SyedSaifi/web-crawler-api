@@ -43,6 +43,6 @@ http://localhost:8090/crawler?url=https://jsoup.org/
 
 
 ## Limitations
-- The solutions work well for depth=1. In an ideal scenario for depth=n we would be running the crawler as a job, where a job from one domain name can be sent to a worker. This way we would be able to scale out of the application.
+- The solution work well for depth=1. In an ideal scenario for depth=n we would be running the crawler as a job, where a job from one domain name can be sent to a worker. This way we would be able to scale out of the application.
 - In the interest of time, I have not secured the API. This can be simply done though JWT, Oauth2 or OpenId.
 - For better caching, the cache providers like Redis, Caffeine, Couchbase, etc could have been configured. But to keep things simple and in the interest of time, I have used default provider by Spring Boot.
