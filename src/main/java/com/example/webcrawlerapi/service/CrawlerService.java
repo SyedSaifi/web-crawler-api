@@ -10,6 +10,7 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -34,6 +35,7 @@ public class CrawlerService implements ICrawlerService {
      * @return: Return pageInformation object with complete crawling metadata
      */
     @Override
+    @Cacheable(value = "pageinformation", key = "#baseUrl")
     public PageInformation crawl(final String baseUrl, final int depth, PageInformation pageInformation,
                                  final List<String> processedUrls) {
         logger.debug("Starting crawler for url {} for depth {}", baseUrl, depth);
