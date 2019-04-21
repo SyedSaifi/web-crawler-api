@@ -65,6 +65,7 @@ Sample response from the api
 ## Assumption and design decisions
 - https://start.spring.io/ has been used for spring boot template structure.
 - JSoup is used for fetching web contents. I have made use of timeout and followRedirects configuration while connecting to a link.
+- Api is developed using test driven development approach.
 - I have used the EHCache for caching my web page data. The time to live is set as 60s.
 - Parallel streams have been used to fetch the information about the underneath links for better performance.
 - The application takes care of not processing the same link multiple times. This avoids looping links to be processed more than once.
