@@ -10,7 +10,6 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +19,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-//@CacheConfig(cacheNames = {"PAGE"})
 public class CrawlerService implements ICrawlerService {
 
+    private static final String URL_IS_REACHABLE = "Url is reachable";
+    private static final String URL_IS_UNREACHABLE_CAUSE = "Url is unreachable. Cause: ";
     private static Logger logger = LoggerFactory.getLogger(CrawlerService.class);
 
     @Autowired
@@ -37,7 +37,6 @@ public class CrawlerService implements ICrawlerService {
      * @return: Return pageInformation object with complete crawling metadata
      */
     @Override
-//    @Cacheable(key = "#baseUrl", condition = "#baseUrl != null")
     @Cacheable(value = "pageInformation", key = "#baseUrl")
     public PageInformation crawl(final String baseUrl, final int depth, PageInformation pageInformation,
                                  final List<String> processedUrls) {
@@ -49,7 +48,7 @@ public class CrawlerService implements ICrawlerService {
             final List<String> updatedProcessedUrls = Optional.ofNullable(processedUrls).orElse(new ArrayList<>());
             if (!updatedProcessedUrls.contains(baseUrl)) {
                 updatedProcessedUrls.add(baseUrl);
-                String hostname = baseUrl.split("://")[1].split("/")[0];
+                String hostname = pageInformation.getBaseUrl().split("://")[1].split("/")[0];
 
                 fetchLinks(baseUrl).ifPresent(elements -> {
                     logger.info("Found {} links on the web page: {}", elements.size(), baseUrl);
@@ -109,13 +108,13 @@ public class CrawlerService implements ICrawlerService {
             //HTTP OK status code indicating that everything is great.
             if (connection.response().statusCode() == 200) {
                 linkInformation.setReachable(true);
-                linkInformation.setRemark("Url is reachable");
+                linkInformation.setRemark(URL_IS_REACHABLE);
             }
             return linkInformation;
         } catch (final IOException | IllegalArgumentException e) {
             logger.error(String.format("Error getting contents of url %s", internalLink), e);
             linkInformation.setReachable(false);
-            linkInformation.setRemark("Url is unreachable. Cause: " + e.getMessage());
+            linkInformation.setRemark(URL_IS_UNREACHABLE_CAUSE + e.getMessage());
             return linkInformation;
         }
     }

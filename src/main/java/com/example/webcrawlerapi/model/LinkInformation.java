@@ -1,7 +1,6 @@
 package com.example.webcrawlerapi.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jsoup.select.Elements;
 
 public class LinkInformation {
@@ -11,9 +10,6 @@ public class LinkInformation {
     private String protocol;
 
     private boolean reachable;
-
-    @JsonIgnore
-    private Elements childLinks;
 
     private String remark;
 
@@ -31,14 +27,6 @@ public class LinkInformation {
 
     public void setProtocol(String protocol) {
         this.protocol = protocol;
-    }
-
-    public Elements getChildLinks() {
-        return childLinks;
-    }
-
-    public void setChildLinks(Elements childLinks) {
-        this.childLinks = childLinks;
     }
 
     public boolean isReachable() {

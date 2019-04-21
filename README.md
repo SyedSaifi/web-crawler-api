@@ -40,6 +40,7 @@ http://localhost:8090/crawler?url=https://jsoup.org/
 - JSoup is used for fetching web contents. I have made use of timeout and followRedirects configuration while connecting to a link.
 - I have used the EHCache for caching my web page data. The time to live is set as 60s.
 - Parallel streams have been used to fetch the information about the underneath links for better performance.
+- The application takes care of not processing the same link multiple times. This avoid looping links to be processed more than once.
 
 
 ## Limitations
