@@ -1,18 +1,18 @@
 ## Overview
-This application is a web crawler API to go upto provided depth (max limits apply). Crawling service is exposed as a REST endpoint. It also uses caching (Spring boot implementation) mechanism to improve performance for repeated URLs.
+This application is a web crawler API to go upto provided depth (default depth=1). Crawling service is exposed as a REST endpoint. It also uses caching (EHCache implementation) mechanism to improve performance for repeated URLs.
 
 ## Implementation
 The solution delivered here is a Java project implemented as a Spring Boot / Maven project.
 
 ## Build
-In order to build the program, the following is required,
+In order to build the project, the following is required,
 
 - Java 8 JDK
 - Maven 3.x.x
 
 Ways to build and run the project:
 ```
-From the top project level directory run,
+From the top level project directory run,
 
 $ mvn clean package
 $ mvn spring-boot:run
@@ -39,6 +39,29 @@ Alternatively, it can also be tested over PostMan or any rest client:
 http://localhost:8090/crawler?url=https://jsoup.org/
 ```
 
+Sample response from the api
+```
+{
+   "baseUrl":"https://jsoup.org/,
+   "internalLinks":0,
+   "externalLinks":2,
+   "links":[
+      {
+         "link":"http://xyz.com/",
+         "protocol":"http",
+         "reachable":true,
+         "remarks":"Link is reachable"
+      },
+      {
+         "link":"https://xyz1.com/",
+         "protocol":"https",
+         "reachable":false,
+         "remarks":"Link is unreachable. Unknown hostname"
+      }
+   ]
+}
+```
+
 ## Assumption and design decisions
 - https://start.spring.io/ has been used for spring boot template structure.
 - JSoup is used for fetching web contents. I have made use of timeout and followRedirects configuration while connecting to a link.
@@ -50,5 +73,5 @@ http://localhost:8090/crawler?url=https://jsoup.org/
 
 ## Limitations
 - The solution works well for depth=1. In an ideal scenario for depth=n we would be running the crawler as a job, where a job from one domain name can be sent to a worker. This way we would be able to scale out our the application.
-- In the interest of time, I have not secured the API. This can be simply done using Spring security with JWT, oAuth2 or OpenId.
+- In the interest of time, I have not secured the API. This can be simply done using Spring security with JWT, OAuth2 or OpenId.
 - For better caching, the cache providers like Redis, Caffeine, Couchbase, etc could have been configured. But to keep things simple and in the interest of time, I have used EHCache.
