@@ -5,6 +5,7 @@ import com.example.webcrawlerapi.model.PageInformation;
 import com.example.webcrawlerapi.service.ICrawlerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,7 @@ public class CrawlerController {
      * @return : Returns PageInformation object as JSON
      */
     @ApiOperation(value = "This api fetches the crawled page information.",
-            notes = "Default depth for crawling is 1")
+            notes = "Default depth for crawling is 1", authorizations = {@Authorization(value="basicAuth")})
     @GetMapping(value = "/crawler", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<PageInformation> getPageInformation(
             @NotNull @RequestParam(value = "url", required = true) String url,

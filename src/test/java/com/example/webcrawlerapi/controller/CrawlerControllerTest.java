@@ -13,6 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -45,7 +46,9 @@ public class CrawlerControllerTest {
 
     @Test
     public void testGetPageInformationIncorrectUrl() throws Exception {
-        MvcResult mvcResult = mockMvc.perform(get("/crawler").contentType(MediaType.APPLICATION_JSON))
+        MvcResult mvcResult = mockMvc.perform(get("/crawler")
+                .with(user("user").password("password"))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest()).andReturn();
 
         Assert.assertEquals("Required String parameter 'url' is not present",
@@ -58,11 +61,21 @@ public class CrawlerControllerTest {
                 .thenReturn(pageInfomation);
 
         mockMvc.perform(get("/crawler?url=someurl&depth=1")
+                .with(user("user").password("password"))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.baseUrl").value("http://someurl"))
                 .andExpect(jsonPath("$.internalLinks").value(1))
-                .andExpect(jsonPath("$.externalLinks").value(0))
-                .andReturn();
+                .andExpect(jsonPath("$.externalLinks").value(0));
+    }
+
+    @Test
+    public void testGetPageInformationWithAuth() throws Exception{
+        when(crawlerService.crawl(anyString(), anyInt(), eq(true)))
+                .thenReturn(pageInfomation);
+
+        mockMvc.perform(get("/crawler?url=someurl&depth=1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
     }
 }
