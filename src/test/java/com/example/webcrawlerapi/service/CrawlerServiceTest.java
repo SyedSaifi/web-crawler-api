@@ -30,8 +30,7 @@ public class CrawlerServiceTest {
     @Test
     public void testCrawlIncorrectUrl() {
         pageInformation = new PageInformation("https://jsoup111.org/");
-        PageInformation pageInfomation = crawlerService.crawl("https://jsoup111.org/", 1,
-                pageInformation, null);
+        PageInformation pageInfomation = crawlerService.crawl("https://jsoup111.org/", 1, true);
         Assert.assertEquals("https://jsoup111.org/", pageInfomation.getBaseUrl());
         Assert.assertNull(pageInfomation.getLinks());
         Assert.assertEquals(0, pageInfomation.getInternalLinks());
@@ -41,8 +40,7 @@ public class CrawlerServiceTest {
     @Test
     public void testCrawl() {
         pageInformation = new PageInformation("https://jsoup.org/");
-        PageInformation pageInfomation = crawlerService.crawl("https://jsoup.org/", 1,
-                pageInformation, null);
+        PageInformation pageInfomation = crawlerService.crawl("https://jsoup.org/", 1,true);
         Assert.assertEquals("https://jsoup.org/", pageInfomation.getBaseUrl());
         Assert.assertTrue(pageInfomation.getLinks().size() > 0);
         Assert.assertTrue(pageInfomation.getInternalLinks() > 0);

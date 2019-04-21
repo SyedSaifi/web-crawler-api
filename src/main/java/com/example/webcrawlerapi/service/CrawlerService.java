@@ -14,73 +14,79 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CrawlerService implements ICrawlerService {
+
+    @Autowired
+    private AppPropertiesConfig crawlerProperties;
 
     private static final String URL_IS_REACHABLE = "Url is reachable";
     private static final String URL_IS_UNREACHABLE_CAUSE = "Url is unreachable. Cause: ";
     private static Logger logger = LoggerFactory.getLogger(CrawlerService.class);
 
-    @Autowired
-    private AppPropertiesConfig crawlerProperties;
+    private PageInformation pageInformation;
+    private String domain;
+    private Set<String> processedUrls;
 
     /**
-     *
      * @param baseUrl : The baseUrl to crawl
      * @param depth : The depth to which baseUrl should be crawled
-     * @param pageInformation: The pageInformation object which store the crawling information
-     * @param processedUrls: The url which is already processed
      * @return: Return pageInformation object with complete crawling metadata
      */
     @Override
-    @Cacheable(value = "pageInformation", key = "#baseUrl")
-    public PageInformation crawl(final String baseUrl, final int depth, PageInformation pageInformation,
-                                 final List<String> processedUrls) {
+    @Cacheable(value = "pageInformation", key = "#baseUrl.concat('-').concat(#depth)")
+    public PageInformation crawl(String baseUrl, int depth, boolean is_first) {
         logger.debug("Starting crawler for url {} for depth {}", baseUrl, depth);
+
+        if(is_first){
+            pageInformation = new PageInformation(baseUrl);
+            domain = pageInformation.getBaseUrl().split("://")[1].split("/")[0];
+            processedUrls = new HashSet<>();
+        }
+
         if (depth == 0) {
             logger.info("Maximum depth reached, backing out for url {}", baseUrl);
             return null;
         } else {
-            final List<String> updatedProcessedUrls = Optional.ofNullable(processedUrls).orElse(new ArrayList<>());
-            if (!updatedProcessedUrls.contains(baseUrl)) {
-                updatedProcessedUrls.add(baseUrl);
-                String hostname = pageInformation.getBaseUrl().split("://")[1].split("/")[0];
-
+            if (processedUrls.add(baseUrl)) {
                 fetchLinks(baseUrl).ifPresent(elements -> {
                     logger.info("Found {} links on the web page: {}", elements.size(), baseUrl);
                     elements.parallelStream().forEach(link -> {
                         String internalLink = link.attr("abs:href");
 
-                        if (internalLink.contains(hostname))
+                        if (internalLink.contains(domain))
                             pageInformation.getInternal().incrementAndGet();
                         else
                             pageInformation.getExternal().incrementAndGet();
 
                         LinkInformation linkInformation = fetchLinkInformation(internalLink);
                         pageInformation.addLinkInfo(linkInformation);
-                        crawl(internalLink, depth - 1, pageInformation, updatedProcessedUrls);
+                        crawl(internalLink, depth - 1,false);
                     });
                 });
                 pageInformation.setInternalLinks(pageInformation.getInternal().get());
                 pageInformation.setExternalLinks(pageInformation.getExternal().get());
                 return pageInformation;
             } else {
+                logger.info("Duplicate link found. Skipping it.");
                 return null;
             }
         }
     }
 
-    private Optional<Elements> fetchLinks(final String url) {
+    /**
+     * @param url : The url for which the link elements to be fetched
+     * @return : Returns Option<Elements> if there are links under the input url, or else empty
+     */
+    private Optional<Elements> fetchLinks(String url) {
         logger.info("Fetching links for url: {}", url);
 
         try {
-            final Document document = Jsoup.connect(url).timeout(crawlerProperties.getTimeOut())
+            Document document = Jsoup.connect(url).timeout(crawlerProperties.getTimeOut())
                     .followRedirects(crawlerProperties.isFollowRedirects()).get();
-            final Elements links = document.select("a[href]");
+            Elements links = document.select("a[href]");
 
             return Optional.of(links);
         } catch (IOException | IllegalArgumentException e) {
@@ -89,7 +95,11 @@ public class CrawlerService implements ICrawlerService {
         }
     }
 
-    private LinkInformation fetchLinkInformation(final String internalLink) {
+    /**
+     * @param internalLink : The links which needs to be validated if it is reachable
+     * @return : Returns LinkInformation object which contains the metadata of the link which is validated
+     */
+    private LinkInformation fetchLinkInformation(String internalLink) {
         logger.info("Fetching contents for link {}", internalLink);
         LinkInformation linkInformation = new LinkInformation();
 
@@ -111,7 +121,7 @@ public class CrawlerService implements ICrawlerService {
                 linkInformation.setRemark(URL_IS_REACHABLE);
             }
             return linkInformation;
-        } catch (final IOException | IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException e) {
             logger.error(String.format("Error getting contents of url %s", internalLink), e);
             linkInformation.setReachable(false);
             linkInformation.setRemark(URL_IS_UNREACHABLE_CAUSE + e.getMessage());

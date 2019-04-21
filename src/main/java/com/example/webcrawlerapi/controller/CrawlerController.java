@@ -43,13 +43,13 @@ public class CrawlerController {
             notes = "Default depth for crawling is 1")
     @GetMapping(value = "/crawler", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<PageInformation> getPageInformation(
-            @NotNull @RequestParam(value = "url", required = true) final String url,
-            @RequestParam(value = "depth", defaultValue = "1", required = false) final Integer depth) {
+            @NotNull @RequestParam(value = "url", required = true) String url,
+            @RequestParam(value = "depth", defaultValue = "1", required = false) int depth) {
 
         logger.info("Request for crawling received for url {} and depth {}", url, depth);
-        final int newDepth = Optional.ofNullable(depth).orElse(crawlerProperties.getDefaultDepth());
+        int newDepth = Optional.ofNullable(depth).orElse(crawlerProperties.getDefaultDepth());
         logger.info("Crawling for depth {}", newDepth);
 
-        return new ResponseEntity<>(crawlerService.crawl(url, newDepth, new PageInformation(url), null), HttpStatus.OK);
+        return new ResponseEntity<>(crawlerService.crawl(url, newDepth,true), HttpStatus.OK);
     }
 }
