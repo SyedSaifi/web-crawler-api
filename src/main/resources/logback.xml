@@ -21,7 +21,7 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>${LOG_PATH}/validation-application-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${LOG_PATH}/web-crawler.api-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <!-- each file should be at most 20MB, keep 30 days worth of history, but at most 2GB -->
             <maxFileSize>20MB</maxFileSize>
             <maxHistory>30</maxHistory>
